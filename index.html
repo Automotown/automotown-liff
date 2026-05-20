@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>ลงทะเบียน VIP Club - Automotown</title>
+  <script charset="utf-8" src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Sarabun", sans-serif;
+      background: #f5f5f5;
+      color: #333;
+      padding: 16px;
+      min-height: 100vh;
+    }
+    .container {
+      max-width: 500px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+    .header { text-align: center; margin-bottom: 20px; }
+    .header h1 { font-size: 22px; color: #ff6b00; margin-bottom: 6px; }
+    .header p { font-size: 13px; color: #666; }
+    .badge {
+      display: inline-block;
+      background: #fff3e0;
+      color: #ff6b00;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 12px;
+      margin-top: 8px;
+    }
+    .form-group { margin-bottom: 14px; }
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: #444;
+    }
+    .required::after { content: " *"; color: #e53935; }
+    input, select, textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 14px;
+      font-family: inherit;
+      background: white;
+    }
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: #ff6b00;
+    }
+    .hint {
+      font-size: 11px;
+      color: #888;
+      margin-top: 4px;
+    }
+    .file-wrap {
+      border: 2px dashed #ddd;
+      border-radius: 8px;
+      padding: 16px;
+      text-align: center;
+      cursor: pointer;
+      background: #fafafa;
+    }
+    .file-wrap.has-file { border-color: #4caf50; background: #f1f8e9; }
+    .file-wrap input[type=file] { display: none; }
+    .file-label { font-size: 13px; color: #666; }
+    .file-preview {
+      max-width: 100%;
+      max-height: 200px;
+      margin-top: 10px;
+      border-radius: 4px;
+    }
+    button {
+      width: 100%;
+      padding: 14px;
+      background: #ff6b00;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+    button:disabled { background: #ccc; cursor: not-allowed; }
+    .loading { display: none; text-align: center; padding: 40px 20px; }
+    .success {
+      display: none;
+      text-align: center;
+      padding: 40px 20px;
+    }
+    .success .icon { font-size: 48px; margin-bottom: 16px; }
+    .success h2 { color: #4caf50; margin-bottom: 12px; }
+    .success p { color: #666; font-size: 14px; line-height: 1.6; }
+    .error {
+      background: #ffebee;
+      color: #c62828;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 13px;
+      margin-bottom: 14px;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container" id="main-form">
+  <div class="header">
+    <h1>🏆 ลงทะเบียน VIP Club</h1>
+    <p>Automotown — รับสิทธิพิเศษเฉพาะสมาชิก</p>
+    <div class="badge">คูปอง 15% ทุกเดือน</div>
+  </div>
+
+  <div class="error" id="error-msg"></div>
+
+  <form id="registration-form">
+    <div class="form-group">
+      <label class="required">ชื่อ-นามสกุล</label>
+      <input type="text" id="name" required>
+    </div>
+
+    <div class="form-group">
+      <label class="required">เบอร์โทรศัพท์</label>
+      <input type="tel" id="phone" required pattern="[0-9]{9,10}">
+      <div class="hint">เฉพาะตัวเลข เช่น 0812345678</div>
+    </div>
+
+    <div class="form-group">
+      <label>อีเมล</label>
+      <input type="email" id="email">
+    </div>
+
+    <div class="form-group">
+      <label class="required">วันเกิด</label>
+      <input type="date" id="dob" required>
+      <div class="hint">ใช้สำหรับส่งคูปองวันเกิด 🎂</div>
+    </div>
+
+    <div class="form-group">
+      <label class="required">ซื้อจากแพลตฟอร์มไหน</label>
+      <select id="platform" required>
+        <option value="">-- เลือก --</option>
+        <option value="Lazada">Lazada</option>
+        <option value="Shopee">Shopee</option>
+        <option value="TikTok">TikTok</option>
+        <option value="LINE MyShop">LINE MyShop</option>
+        <option value="หน้าร้าน">หน้าร้าน</option>
+        <option value="Other">อื่นๆ</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label class="required">Order ID</label>
+      <input type="text" id="order_id" required>
+      <div class="hint">เลขคำสั่งซื้อจากแพลตฟอร์ม</div>
+    </div>
+
+    <div class="form-group">
+      <label class="required">ยอดสั่งซื้อ (บาท)</label>
+      <input type="number" id="amount" required min="0" step="0.01">
+    </div>
+
+    <div class="form-group">
+      <label class="required">วันที่สั่งซื้อ</label>
+      <input type="date" id="order_date" required>
+    </div>
+
+    <div class="form-group">
+      <label>รุ่นรถ</label>
+      <input type="text" id="vehicle_model" placeholder="เช่น Vios, Civic, XForce">
+      <div class="hint">ใส่ถ้าต้องการรับคอนเทนต์ตามรุ่นรถ</div>
+    </div>
+
+    <div class="form-group">
+      <label>ปีรุ่น</label>
+      <input type="text" id="vehicle_model_year" placeholder="เช่น 2020, 2023">
+    </div>
+
+    <div class="form-group">
+      <label class="required">สลิปคำสั่งซื้อ</label>
+      <label class="file-wrap" id="file-wrap">
+        <input type="file" id="slip" accept="image/*" required>
+        <div class="file-label" id="file-label">📎 แตะเพื่อแนบรูปสลิป</div>
+        <img class="file-preview" id="file-preview" style="display:none">
+      </label>
+      <div class="hint">screenshot จาก Lazada/Shopee/TikTok ฯลฯ</div>
+    </div>
+
+    <button type="submit" id="submit-btn">ลงทะเบียน VIP</button>
+  </form>
+</div>
+
+<div class="container loading" id="loading">
+  <h2>กำลังส่งข้อมูล...</h2>
+  <p style="margin-top:12px;color:#666;font-size:13px;">อาจใช้เวลาสักครู่หากสลิปไฟล์ใหญ่</p>
+</div>
+
+<div class="container success" id="success">
+  <div class="icon">✅</div>
+  <h2>ลงทะเบียนเรียบร้อย!</h2>
+  <p>
+    ทีมงานจะตรวจสอบสลิปภายใน 24 ชั่วโมง<br>
+    เมื่อผ่านการตรวจสอบ คุณจะได้รับ<br>
+    <strong>คูปองต้อนรับและสิทธิ VIP ทันที</strong><br><br>
+    ขอบคุณที่เป็นส่วนหนึ่งของ Automotown 🏎️
+  </p>
+</div>
+
+<script>
+  // ========== แก้ 2 ค่าตรงนี้ ==========
+  const LIFF_ID = "2010135227-vA5tVcyB";
+  const WEBHOOK_URL = "https://hook.eu1.make.com/2xk2nz9isffses1miu0wvqdogj761i92";
+  // =====================================
+
+  let lineUserId = null;
+
+  // Initialize LIFF
+  liff.init({ liffId: LIFF_ID })
+    .then(() => {
+      if (!liff.isLoggedIn()) {
+        liff.login();
+        return;
+      }
+      return liff.getProfile();
+    })
+    .then(profile => {
+      if (profile) {
+        lineUserId = profile.userId;
+        // ถ้าลูกค้ามีชื่อใน LINE pre-fill ให้
+        if (profile.displayName) {
+          document.getElementById('name').value = profile.displayName;
+        }
+      }
+    })
+    .catch(err => {
+      showError('ไม่สามารถเชื่อมต่อ LINE ได้ กรุณาเปิดผ่านแอป LINE');
+      console.error(err);
+    });
+
+  // File preview
+  document.getElementById('slip').addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const wrap = document.getElementById('file-wrap');
+    const label = document.getElementById('file-label');
+    const preview = document.getElementById('file-preview');
+    wrap.classList.add('has-file');
+    label.textContent = '✓ ' + file.name;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      preview.src = e.target.result;
+      preview.style.display = 'block';
+    };
+    reader.readAsDataURL(file);
+  });
+
+  // Convert file to base64
+  function fileToBase64(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result.split(',')[1]);
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  }
+
+  function showError(msg) {
+    const e = document.getElementById('error-msg');
+    e.textContent = msg;
+    e.style.display = 'block';
+    window.scrollTo(0, 0);
+  }
+
+  function hideError() {
+    document.getElementById('error-msg').style.display = 'none';
+  }
+
+  // Submit
+  document.getElementById('registration-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    hideError();
+
+    if (!lineUserId) {
+      showError('ยังไม่ได้เชื่อมต่อ LINE กรุณารอสักครู่หรือเปิดผ่านแอป LINE');
+      return;
+    }
+
+    const submitBtn = document.getElementById('submit-btn');
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'กำลังส่ง...';
+
+    try {
+      const slipFile = document.getElementById('slip').files[0];
+      const slipBase64 = await fileToBase64(slipFile);
+
+      const payload = {
+        line_user_id: lineUserId,
+        name: document.getElementById('name').value.trim(),
+        phone: document.getElementById('phone').value.trim(),
+        email: document.getElementById('email').value.trim(),
+        date_of_birth: document.getElementById('dob').value,
+        platform: document.getElementById('platform').value,
+        order_id: document.getElementById('order_id').value.trim(),
+        amount: parseFloat(document.getElementById('amount').value),
+        order_date: document.getElementById('order_date').value,
+        vehicle_model: document.getElementById('vehicle_model').value.trim(),
+        vehicle_model_year: document.getElementById('vehicle_model_year').value.trim(),
+        slip_filename: slipFile.name,
+        slip_base64: slipBase64,
+        registered_at: new Date().toISOString()
+      };
+
+      const response = await fetch(WEBHOOK_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      if (!response.ok) throw new Error('Server returned ' + response.status);
+
+      // Success
+      document.getElementById('main-form').style.display = 'none';
+      document.getElementById('loading').style.display = 'none';
+      document.getElementById('success').style.display = 'block';
+
+      // ปิดอัตโนมัติหลัง 5 วินาที
+      setTimeout(() => {
+        if (liff.isInClient()) liff.closeWindow();
+      }, 5000);
+
+    } catch (err) {
+      console.error(err);
+      showError('เกิดข้อผิดพลาดในการส่งข้อมูล กรุณาลองอีกครั้ง');
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'ลงทะเบียน VIP';
+    }
+  });
+</script>
+
+</body>
+</html>
